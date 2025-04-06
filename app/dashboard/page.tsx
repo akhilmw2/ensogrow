@@ -37,6 +37,7 @@ export default function DashboardPage() {
           Your Dashboard
         </h1>
         <p className="text-center">No plants yet!</p>
+        <ChatToggle />
       </main>
     );
   }
@@ -79,6 +80,7 @@ export default function DashboardPage() {
           );
         })}
       </div>
+      <ChatToggle />
     </main>
   );
 }

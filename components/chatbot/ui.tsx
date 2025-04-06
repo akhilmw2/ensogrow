@@ -1,15 +1,14 @@
 "use client";
+import { X } from "lucide-react";
 import { useState } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ChatInput } from "./ChatInput";
-import { ChatMessage } from "./ChatMessage";
 
 const removeSpecialCharacters = (text: string) => {
   return text.replace(/[*_]/g, "");
 };
 
 export const ChatBot = ({ onClose }: { onClose: () => void }) => {
-  // Initial bot message with a natural greeting
   const initialContext = `
     Hello! 🌱 I'm Urban PlantationExpert, your personal assistant for everything related to urban gardening. 
     I am here to help you with:
@@ -26,17 +25,15 @@ export const ChatBot = ({ onClose }: { onClose: () => void }) => {
     { role: "bot", content: initialContext },
   ]);
   const [loading, setLoading] = useState(false);
-  const [context, setContext] = useState(initialContext); // To track the conversation context
+  const [context, setContext] = useState(initialContext);
 
   const handleSend = async (userMessage: string) => {
-    // 1. Add the user's message to the chat (it will be printed even if it's irrelevant)
     const isRelevantMessage = checkRelevance(userMessage);
 
-    // Add the user's message to the chat, regardless of relevance
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setLoading(true);
-    setContext((prev) => prev + " " + userMessage); // Update context with the user's message
-   
+    setContext((prev) => prev + " " + userMessage);
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -44,20 +41,19 @@ export const ChatBot = ({ onClose }: { onClose: () => void }) => {
         body: JSON.stringify({
           message: userMessage,
           context: context,
-          systemInstructions: `You are a helpful assistant. Respond in very short and clear format. typically the response should be 3-4 pointers max and each pointer should be max of 1-2 line . Use bullet points. Do not include any introductory or concluding sentences. List each point as a separate bullet point. Do not use markdown symbols like **, *, or _.\n Example Response:\n - Point 1\n - Point 2\n - Point 3`,
+          systemInstructions: `You are a helpful assistant. Respond in very short and clear format. Typically, the response should be 3-4 pointers max, each with a maximum of 1-2 lines. Use bullet points. Do not include introductory or concluding sentences.`,
         }),
       });
 
       const { reply } = await res.json();
 
-      // 2. Format the bot's response and add it to the chat
       const formattedReply = formatBotResponse(reply);
 
       setMessages((prev) => [
         ...prev,
         { role: "bot", content: formattedReply },
       ]);
-      setContext((prev) => prev + " " + formattedReply); // Update context with the bot's reply
+      setContext((prev) => prev + " " + formattedReply);
     } catch (error) {
       setMessages((prev) => [
         ...prev,
@@ -71,7 +67,6 @@ export const ChatBot = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
-  // Function to check if the user's message is relevant to urban gardening
   const checkRelevance = (message: string) => {
     const relevantKeywords = [
       "plant care",
@@ -103,13 +98,11 @@ export const ChatBot = ({ onClose }: { onClose: () => void }) => {
     );
   };
 
-  // Function to format bot's response into short, structured points
   const formatBotResponse = (response: string) => {
-    // Split the response into sentences and break them into structured points
     const sentences = response.split(". ");
     const formattedResponse = sentences
       .map((sentence, idx) => {
-        return removeSpecialCharacters(sentence); // First sentence is the intro or summary.
+        return removeSpecialCharacters(sentence);
       })
       .join(" ");
 
@@ -117,15 +110,30 @@ export const ChatBot = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <Card className="max-w-2xl bg-white mx-auto flex flex-col h-[80vh]">
-      <CardHeader className="text-xl font-semibold">
-        🌿 Urban PlantationExpert ChatBot
-      </CardHeader>
-      <CardContent className="flex-1 overflow-y-auto space-y-4 p-4">
+    <Card
+      className="fixed bottom-20 right-4 left-4 md:left-auto md:right-4 max-w-2xl bg-white shadow-xl rounded-tl-2xl rounded-tr-2xl flex flex-col h-[80vh]"
+      style={{ marginBottom: "20px" }} // pulls the chat up above the leaf button
+    >
+      {/* Fixed Header */}
+      <div className="bg-gradient-to-r from-[#a3b18a] to-[#588157] w-full text-white flex items-center rounded-t-2xl justify-between p-4 absolute top-0 z-10">
+        <h2 className="text-lg font-semibold w-full text-center">
+          🌿 GrowMate Assistant
+        </h2>
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-200"
+          aria-label="Close Chat"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto space-y-4 px-4 py-5 mt-8 mb-10 bg-white">
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`p-4 rounded-lg max-w-full ${
+            className={`p-3 rounded-xl max-w-full ${
               msg.role === "bot"
                 ? "bg-green-100 text-green-800 text-left"
                 : "bg-blue-100 text-blue-800 text-right"
@@ -134,7 +142,9 @@ export const ChatBot = ({ onClose }: { onClose: () => void }) => {
             <p className="whitespace-pre-line">{msg.content}</p>
           </div>
         ))}
-      </CardContent>
+      </div>
+
+      {/* Input */}
       <ChatInput onSend={handleSend} disabled={loading} />
     </Card>
   );
