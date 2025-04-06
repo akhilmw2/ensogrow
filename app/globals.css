@@ -2,8 +2,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -115,11 +113,24 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@layer utilities {
+  .outline-ring\/50 {
+    outline-color: oklch(0.708 0 0 / 0.5); /* same as your --ring */
+  }
+
+  .bg-background {
+    background-color: var(--background);
+  }
+  .text-foreground {
+    color: var(--foreground);
+  }
+}
+
 @layer base {
   * {
-    /* @apply outline-ring/50; */
+    @apply outline-ring/50;
   }
   body {
-    /* @apply bg-background text-foreground; */
+    @apply bg-background text-foreground;
   }
 }
