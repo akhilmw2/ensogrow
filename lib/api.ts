@@ -19,18 +19,16 @@ export async function postCropRecommendation(formData: {
     return response.data;
 }
 
-// Example of a function to authenticate a user (login)
-export const loginUser = async (credentials: {
-    email: string;
-    password: string;
-}) => {
+// POST /plants/custom
+export async function postCustomPlant(plantName: string) {
     try {
-        const response = await api.post('/api/login', credentials);
-        return response.data; // presumably { token, user } or something similar
-    } catch (error) {
-        console.error('Error logging in', error);
-        throw error;
+      // Adjust the request body shape if your backend expects something else
+      const response = await api.post('/plants/custom', { name: plantName });
+      // e.g. response.data might be { id: 99, plantName: "Tomatoes", ... }
+      return response.data;
+    } catch (err: any) {
+      throw err;
     }
-};
+  }
 
 export default api;
