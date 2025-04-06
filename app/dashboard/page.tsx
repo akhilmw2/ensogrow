@@ -1,7 +1,9 @@
+"use client";
 import ChatToggle from "@/components/chatbot/ChatToggle";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { redirect } from "next/navigation";
+import { deleteCookie } from "@/lib/utils";
 
 interface Plant {
   id: string;
@@ -11,7 +13,7 @@ interface Plant {
   completedSteps: number; // how many steps user has done
 }
 
-const DashboardPage = async () => {
+const DashboardPage = () => {
   // Mock data: in a real app, fetch from an API or global store
   console.log("key : ", process.env.NEXT_PUBLIC_GEMINI_API_KEY);
 
@@ -42,11 +44,54 @@ const DashboardPage = async () => {
     },
   ];
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+  const handleLogout = () => {
+    // Handle logout logic here (e.g., clear session, redirect)
+    console.log("User logged out");
+    deleteCookie("accessToken");
+    redirect("/login"); // Example of redirecting to a login page
+  };
+
+  // Default profile image URL
+  const defaultProfileImage = "https://www.w3schools.com/w3images/avatar2.png"; // Replace this with a suitable default image URL
+
   return (
     <main className="max-w-5xl mx-auto p-4 sm:p-6 md:p-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-        Your Dashboard
-      </h1>
+      {/* Header */}
+      <header className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          Your Dashboard
+        </h1>
+        <div className="relative">
+          <button
+            onClick={toggleDropdown}
+            className="flex items-center space-x-2 text-gray-800 hover:text-gray-600"
+          >
+            {/* Profile Image */}
+            <img
+              src={defaultProfileImage} // Use default image
+              alt="User Profile"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+            <span className="hidden sm:inline-block text-sm">User</span>
+          </button>
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-2 bg-white border rounded-lg shadow-lg w-40 z-10">
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Display Plants or No Plants Message */}
       {myPlants.length === 0 ? (
         <p className="text-center text-gray-700">No plants yet!</p>
       ) : (
@@ -71,7 +116,7 @@ const DashboardPage = async () => {
                   Steps Completed: {plant.completedSteps}/{plant.totalSteps}
                 </p>
 
-                {/* Simple progress bar (optional) */}
+                {/* Simple progress bar */}
                 <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                   <div
                     className="bg-green-500 h-2 rounded-full"
@@ -87,6 +132,7 @@ const DashboardPage = async () => {
           })}
         </div>
       )}
+
       <ChatToggle />
     </main>
   );
