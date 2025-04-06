@@ -94,7 +94,7 @@ export default function RecommendationsPage() {
             className="bg-white rounded-lg shadow-lg p-6 flex flex-col transition-transform transform hover:scale-105 duration-300 ease-in-out"
           >
             <img
-              src={plant.imageUrl}
+              src="https://picsum.photos/500/500"
               alt={plant.name || plant.plantName}
               className="w-full h-40 sm:h-48 object-cover rounded mb-4"
             />

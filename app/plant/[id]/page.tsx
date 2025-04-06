@@ -66,7 +66,7 @@ export default function PlantDetailsPage() {
         {/* Plant Image */}
         {imageUrl && (
           <img
-            src={imageUrl}
+            src="https://picsum.photos/500/500"
             alt={displayName}
             className="w-full h-64 object-cover rounded-xl shadow-md mb-6"
           />

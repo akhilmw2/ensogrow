@@ -79,7 +79,7 @@ export default function PlantTrackingPage() {
         {/* Plant Image */}
         {plant.imageUrl && (
           <img
-            src={plant.imageUrl}
+            src="https://picsum.photos/500/500"
             alt={plant.plantName}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />
