@@ -13,7 +13,7 @@ export function LoginForm({ className, ...props }: any) {
       const { idToken } = await signInWithGoogle();
       console.log("Successfully signed in. ID Token:", idToken);
       setCookie("accessToken", idToken);
-      router.push("/dashboard");
+      router.push("/landing");
     } catch (error) {
       console.error("Error signing in:", error);
     }

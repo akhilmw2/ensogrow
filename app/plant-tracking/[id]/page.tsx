@@ -1,59 +1,73 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { getPlanDetail, completeStep } from '@/lib/api';
 
 export default function PlantTrackingPage() {
-  const params = useParams();
-  const plantId = params.id; // e.g. "1" or "2"
+  const { id } = useParams();  // plantId
+  const [plant, setPlant] = useState<any>(null);
+  const [completed, setCompleted] = useState<boolean[]>([]);
 
-  // Mock data. In a real app, you'd fetch from an API:
-  const mockPlantData = {
-    id: plantId,
-    name: 'Cherry Tomato',
-    imageUrl:
-      'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=500&q=80',
-    steps: [
-      'Choose a container with drainage holes',
-      'Use high-quality potting mix',
-      'Plant seeds or seedlings about 2-3 inches deep',
-      'Water thoroughly, keep soil moist but not soggy',
-      'Place in a spot with 6+ hours of sunlight',
-      'Fertilize lightly every couple of weeks'
-    ]
-  };
+  useEffect(() => {
+    async function fetchPlant() {
+      try {
+        const res = await getPlanDetail(id);
+        // Suppose res = { message: "...", data: { steps: [...], ... } }
+        const plantData = res.data;
+        setPlant(plantData);
 
-  // We'll store which steps are completed in state:
-  // A boolean array, e.g. [false, false, false, ...]
-  const [completedSteps, setCompletedSteps] = useState<boolean[]>(
-    new Array(mockPlantData.steps.length).fill(false)
-  );
+        // Set up 'completed' array based on each step's isCompleted
+        const checks = plantData.steps.map((step: any) => step.isCompleted);
+        setCompleted(checks);
+      } catch (err) {
+        console.error('Error fetching plant details:', err);
+      }
+    }
+    fetchPlant();
+  }, [id]);
 
-  // Calculate progress
-  const totalSteps = mockPlantData.steps.length;
-  const doneCount = completedSteps.filter(Boolean).length;
-  const progressPercent = (doneCount / totalSteps) * 100;
+  if (!plant) {
+    return <p>Loading plant data...</p>;
+  }
 
-  // Handle checkbox toggling
-  const toggleStep = (index: number) => {
-    setCompletedSteps((prev) => {
-      const newCompleted = [...prev];
-      newCompleted[index] = !newCompleted[index];
-      return newCompleted;
+  const totalSteps = plant.steps?.length || 0;
+  const doneCount = completed.filter(Boolean).length;
+  const progressPercent = totalSteps ? (doneCount / totalSteps) * 100 : 0;
+
+  async function toggleStep(index: number) {
+    // 1. Flip the local state so the UI updates immediately
+    setCompleted((prev) => {
+      const newArr = [...prev];
+      newArr[index] = !newArr[index];
+      return newArr;
     });
-  };
+
+    // 2. Call the backend to mark the step in DB
+    try {
+      const stepId = plant.steps[index]?.id; // or step._id if numeric vs string
+      if (stepId !== undefined) {
+        await completeStep(plant._id, stepId);
+      }
+    } catch (err) {
+      console.error('Error completing step:', err);
+      // If it fails, you might revert the UI state or show an error
+    }
+  }
 
   return (
     <main className="max-w-2xl mx-auto p-4 sm:p-6 md:p-8">
       <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-        {/* Plant Header */}
-        <img
-          src={mockPlantData.imageUrl}
-          alt={mockPlantData.name}
-          className="w-full h-64 object-cover rounded mb-4"
-        />
-        <h1 className="text-2xl font-bold mb-2">{mockPlantData.name}</h1>
+        {/* Plant Image */}
+        {plant.imageUrl && (
+          <img
+            src={plant.imageUrl}
+            alt={plant.plantName}
+            className="w-full h-64 object-cover rounded mb-4"
+          />
+        )}
+        <h1 className="text-2xl font-bold mb-2">{plant.plantName}</h1>
 
         {/* Progress */}
         <p className="text-gray-700 mb-2">
@@ -67,32 +81,32 @@ export default function PlantTrackingPage() {
         </div>
 
         {/* Step Checkboxes */}
-        <div className="text-left w-full mb-6">
-          <h2 className="text-lg font-semibold mb-2">Follow these steps:</h2>
-          <ul className="space-y-3">
-            {mockPlantData.steps.map((step, idx) => (
-              <li key={idx} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={completedSteps[idx]}
-                  onChange={() => toggleStep(idx)}
-                  className="h-4 w-4 accent-green-600"
-                />
-                <span
-                  className={
-                    completedSteps[idx] ? 'line-through text-gray-500' : ''
-                  }
-                >
-                  {step}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {plant.steps && (
+          <div className="text-left w-full mb-6">
+            <h2 className="text-lg font-semibold mb-2">Follow these steps:</h2>
+            <ul className="space-y-3">
+              {plant.steps.map((step: any, idx: number) => (
+                <li key={step._id} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={completed[idx]}
+                    onChange={() => toggleStep(idx)}
+                    className="h-4 w-4 accent-green-600"
+                  />
+                  <span
+                    className={completed[idx] ? 'line-through text-gray-500' : ''}
+                  >
+                    {step.title}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Talk to Plant Doctor Button */}
         <Link
-          href={`/plant-tracking/${plantId}/doctor`}
+          href={`/plant-tracking/${id}/doctor`}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
           Talk to Plant Doctor

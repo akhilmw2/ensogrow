@@ -48,4 +48,21 @@ export async function getActivePlants() {
   return response.data; // e.g. { data: [...] }
 }
 
+
+// GET /plants/id
+export async function getPlanDetail(plantId: string) {
+    const response = await api.get(`/plants/${plantId}`);
+    return response.data; // e.g. { data: [...] }
+}
+
+
+// PATCH /plants/:plantId/steps/:stepId/complete
+export async function completeStep(plantId: string, stepId: number) {
+    // Possibly your backend expects a payload or just a patch call
+    const response = await api.patch(`/plants/${plantId}/steps/${stepId}/complete`);
+    return response.data; // e.g. { message: 'Step updated', data: {...} }
+  }
+
+
+
 export default api;
