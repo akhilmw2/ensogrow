@@ -3,6 +3,7 @@
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useRecommendations } from '@/app/context/RecommendationsContext';
+import { activatePlant } from '@/lib/api';
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -12,14 +13,7 @@ export default function PlantDetailsPage() {
   // Access all recommendations from context
   const { recommendations } = useRecommendations();
 
-  console.log(id);
-  console.log(recommendations);
-  recommendations.map((r) => {
-    console.log(r._id)
-  })
-
   // Find the plant with matching ID
-  // Adjust parseInt if your ID is numeric. If it's a string ID, just compare strings.
   const plant = recommendations.find((p) => p._id === id);
 
   // If no plant is found, maybe the user navigated directly or has stale context
@@ -40,6 +34,7 @@ export default function PlantDetailsPage() {
 
   // De-structure relevant fields from plant
   const {
+    _id,
     plantName,
     name,
     imageUrl,
@@ -50,11 +45,24 @@ export default function PlantDetailsPage() {
   // Use whichever field for the name
   const displayName = name || plantName || 'Unknown Plant';
 
+  // Handle "Proceed to Plant"
+  async function handleProceedToPlant() {
+    try {
+      // 1) Call API to activate this plant
+      await activatePlant(_id);
+      // 2) Redirect to the Dashboard
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('Error activating plant:', error);
+      alert('Failed to activate plant');
+    }
+  }
+
   return (
     <main className="max-w-xl mx-auto p-4 sm:p-6 md:p-8">
       <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
         {/* Plant Image */}
-        {(
+        {imageUrl && (
           <img
             src={imageUrl}
             alt={displayName}
@@ -90,7 +98,7 @@ export default function PlantDetailsPage() {
         {/* Proceed to Plant Button (centered) */}
         <button
           className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
-          onClick={() => alert('Planting process started!')}
+          onClick={handleProceedToPlant}
         >
           Proceed to Plant
         </button>

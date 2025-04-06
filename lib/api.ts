@@ -32,4 +32,16 @@ export const postCustomPlants = async (data: any) => {
   }
 };
 
+// POST /plants/:plantId/activate
+export async function activatePlant(plantId: string) {
+    const response = await api.patch(`/plants/${plantId}/activate`);
+    return response.data; // e.g. { message: 'Plant activated', data: ... }
+}
+
+// GET /plants/active
+export async function getActivePlants() {
+    const response = await api.get('/plants/active');
+    return response.data; // e.g. { data: [...] }
+}
+
 export default api;
