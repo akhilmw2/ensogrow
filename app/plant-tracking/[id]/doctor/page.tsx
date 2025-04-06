@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { diagnosePlant } from '@/lib/api';
+import React, { useEffect, useRef, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { diagnosePlant } from "@/lib/api";
 
 export default function PlantDoctorPage() {
   const { id: plantId } = useParams();
@@ -12,7 +12,7 @@ export default function PlantDoctorPage() {
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
 
   // Diagnosis states
-  const [doctorRawText, setDoctorRawText] = useState('');
+  const [doctorRawText, setDoctorRawText] = useState("");
   const [doctorSteps, setDoctorSteps] = useState<any[]>([]);
   const [hasResponse, setHasResponse] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,15 +23,15 @@ export default function PlantDoctorPage() {
     async function initCamera() {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
+          video: { facingMode: "environment" },
         });
         setStream(mediaStream);
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
         }
       } catch (err) {
-        console.error('Error accessing camera:', err);
-        setError('Unable to access camera');
+        console.error("Error accessing camera:", err);
+        setError("Unable to access camera");
       }
     }
     initCamera();
@@ -47,18 +47,18 @@ export default function PlantDoctorPage() {
   const handleCapture = () => {
     if (!videoRef.current) return;
     const video = videoRef.current;
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], 'captured.jpg', { type: 'image/jpeg' });
+          const file = new File([blob], "captured.jpg", { type: "image/jpeg" });
           setCapturedFile(file);
         }
-      }, 'image/jpeg');
+      }, "image/jpeg");
     }
   };
 
@@ -68,7 +68,7 @@ export default function PlantDoctorPage() {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
-        resolve(result.split(',')[1] || '');
+        resolve(result.split(",")[1] || "");
       };
       reader.onerror = (error) => reject(error);
       reader.readAsDataURL(file);
@@ -78,13 +78,13 @@ export default function PlantDoctorPage() {
   // Send captured image to backend as JSON payload
   const handleSendToDoctor = async () => {
     if (!capturedFile) {
-      setError('No image captured');
+      setError("No image captured");
       return;
     }
     setError(null);
     setLoading(true);
     setHasResponse(false);
-    setDoctorRawText('');
+    setDoctorRawText("");
     setDoctorSteps([]);
 
     try {
@@ -99,17 +99,17 @@ export default function PlantDoctorPage() {
       setDoctorRawText(rawText);
       setHasResponse(true);
 
-      if (rawText.trim() !== '-1' && steps?.length) {
+      if (rawText.trim() !== "-1" && steps?.length) {
         setDoctorSteps(steps);
       }
     } catch (err: any) {
-      console.error('Error diagnosing plant:', err);
+      console.error("Error diagnosing plant:", err);
       if (err.response && err.response.status === 422) {
-        setError('The image could not be processed.');
-        setDoctorRawText('The image could not be processed.');
+        setError("The image could not be processed.");
+        setDoctorRawText("The image could not be processed.");
       } else {
-        setError(err.message || 'Error diagnosing plant');
-        setDoctorRawText(err.message || 'Error diagnosing plant');
+        setError(err.message || "Error diagnosing plant");
+        setDoctorRawText(err.message || "Error diagnosing plant");
       }
       setHasResponse(true);
     } finally {
@@ -123,67 +123,86 @@ export default function PlantDoctorPage() {
   };
 
   return (
-    <main className="max-w-xl mx-auto p-4 sm:p-6 md:p-8">
-      <h1 className="text-2xl font-bold mb-4">
-        Talk to Plant Doctor (Plant ID: {plantId})
-      </h1>
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-100 via-green-200 to-green-400 p-4 sm:p-6 md:p-8">
+      <div className="max-w-lg w-full bg-white rounded-3xl p-6 shadow-lg overflow-hidden">
+        <h1 className="text-xl font-bold text-gray-800 mb-4 text-center">
+          🌱 Talk to Plant Doctor (Plant ID: {plantId})
+        </h1>
 
-      {/* Show live camera preview if no photo captured */}
-      {!capturedFile ? (
-        <div className="mb-6">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="w-full h-64 object-cover rounded mb-4 bg-black"
-          />
-          <button
-            onClick={handleCapture}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded"
-          >
-            Capture Photo
-          </button>
-        </div>
-      ) : (
-        <div className="mb-6">
-          <p className="mb-2 font-semibold">Captured Image:</p>
-          <img
-            src={URL.createObjectURL(capturedFile)}
-            alt="Captured"
-            className="w-full h-64 object-cover rounded mb-4"
-          />
-        </div>
-      )}
+        {/* Show live camera preview if no photo captured */}
+        {!capturedFile ? (
+          <div className="mb-6 rounded-xl overflow-hidden ">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="w-full h-auto object-cover rounded-xl"
+            />
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handleCapture}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-3 rounded-full font-semibold transition-colors duration-300"
+              >
+                Capture Photo
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-6 text-center">
+            <p className="mb-2 font-semibold text-lg text-gray-800">
+              Captured Image:
+            </p>
+            <img
+              src={URL.createObjectURL(capturedFile)}
+              alt="Captured"
+              className="w-full h-auto object-cover rounded-xl shadow-xl"
+            />
+          </div>
+        )}
 
-      {/* Button to send photo to backend */}
-      {capturedFile && (
-        <button
-          onClick={handleSendToDoctor}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-          disabled={loading}
-        >
-          {loading ? 'Analyzing...' : 'Send to Doctor'}
-        </button>
-      )}
+        {/* Button to send photo to backend */}
+        {capturedFile && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={handleSendToDoctor}
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold transition-colors duration-300"
+              disabled={loading}
+            >
+              {loading ? "Analyzing..." : "Send to Doctor"}
+            </button>
+          </div>
+        )}
 
-      {/* Display error/diagnosis result in text area */}
-      {(hasResponse || error) && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Doctor says:</h3>
-          <textarea
-            className="w-full border border-gray-300 rounded p-2"
-            rows={6}
-            value={doctorRawText}
-            readOnly
-          />
-          <button
-            onClick={handleOkClick}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-          >
-            OK
-          </button>
-        </div>
-      )}
+        {/* Display error/diagnosis result in text area */}
+        {(hasResponse || error) && (
+          <div className="mt-6 p-6 bg-white rounded-xl shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              Doctor says:
+            </h3>
+            <textarea
+              className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300 shadow-md"
+              rows={6}
+              value={doctorRawText}
+              readOnly
+            />
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={handleOkClick}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-colors duration-300"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Error message display */}
+        {error && (
+          <div className="mt-6 text-center text-red-500 font-semibold">
+            {error}
+          </div>
+        )}
+      </div>
     </main>
   );
 }

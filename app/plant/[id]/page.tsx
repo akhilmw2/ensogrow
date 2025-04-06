@@ -80,7 +80,7 @@ export default function PlantDetailsPage() {
         {/* Success Rate */}
         {successRate && (
           <p className="text-gray-600 text-lg mb-6">
-            Success Rate: {successRate}
+            Plantation Success: {successRate}
           </p>
         )}
 
