@@ -112,7 +112,7 @@ export default function PlantTrackingPage() {
           href={`/plant-tracking/${id}/doctor`}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
-          Talk to Plant Doctor
+          Check My Plant's Health
         </Link>
       </div>
       <ChatToggle />

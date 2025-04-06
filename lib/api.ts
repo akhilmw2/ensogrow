@@ -63,4 +63,11 @@ export async function completeStep(plantId: string, stepId: number) {
   return response.data; // e.g. { message: 'Step updated', data: {...} }
 }
 
+// We'll send form-data or base64 – whichever your backend expects
+export async function diagnosePlant(plantId: string, payload: { imageBase64: string }) {
+    const response = await api.post(`/plants/${plantId}/diagnose`, payload);
+    return response.data; // e.g. { rawText: "...", steps: [...] }
+  }
+
+
 export default api;
