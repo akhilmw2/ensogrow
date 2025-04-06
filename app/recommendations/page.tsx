@@ -104,7 +104,7 @@ export default function RecommendationsPage() {
             </h2>
             {plant.successRate && (
               <p className="text-sm text-gray-600 mt-auto">
-                Success Rate: {plant.successRate}
+                Plantation Success: {plant.successRate}
               </p>
             )}
           </Link>
@@ -116,7 +116,7 @@ export default function RecommendationsPage() {
           Don’t like these recommendations?
         </h2>
         <p className="text-center text-gray-700 mb-6">
-          Type any plant you want and we’ll fetch its details:
+          Tell us what you want to grow:
         </p>
         <form
           onSubmit={handleCustomPlant}

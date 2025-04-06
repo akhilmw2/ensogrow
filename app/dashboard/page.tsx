@@ -33,56 +33,86 @@ export default function DashboardPage() {
   // If no plants
   if (!activePlants.length) {
     return (
-      <main className="max-w-5xl mx-auto p-4 sm:p-6 md:p-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-          Your Dashboard
-        </h1>
-        <p className="text-center">No plants yet!</p>
+      <main className="bg-gradient-to-r from-green-50 via-green-100 to-green-200 min-h-screen flex items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
+          <h1 className="text-3xl font-semibold text-gray-800 mb-4">
+            Your Dashboard
+          </h1>
+          <p className="text-xl text-gray-600">
+            No plants yet! Start adding some plants to track their progress.
+          </p>
+        </div>
         <ChatToggle />
       </main>
     );
   }
 
   return (
-    <main className="max-w-5xl mx-auto p-4 sm:p-6 md:p-8">
-      {/* header and logout button */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {activePlants.map((plant: any) => {
-          const steps = plant.steps || [];
-          const totalSteps = steps.length;
-          const completedSteps = steps.filter((s: any) => s.isCompleted).length;
-          const progressPercent = totalSteps
-            ? (completedSteps / totalSteps) * 100
-            : 0;
+    <main className="bg-gradient-to-r from-green-50 via-green-100 to-green-200 min-h-screen py-10 px-6 flex flex-col items-center">
+      <div className="w-full max-w-6xl mx-auto">
+        {/* Header and Logout Button */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-semibold text-gray-800">
+            Your Dashboard
+          </h1>
+          <button
+            onClick={handleLogout}
+            className="text-lg font-medium text-red-500 hover:text-red-600 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
 
-          return (
-            <Link
-              key={plant._id}
-              href={`/plant-tracking/${plant._id}`}
-              className="bg-white rounded-lg shadow p-4 flex flex-col hover:shadow-md transition-shadow"
-            >
-              {plant.imageUrl && (
-                <img
-                  src={plant.imageUrl}
-                  alt={plant.plantName}
-                  className="w-full h-36 object-cover rounded mb-4"
-                />
-              )}
-              <h2 className="text-lg font-semibold mb-2">{plant.plantName}</h2>
-              <p className="text-sm text-gray-600 mb-2">
-                Steps Completed: {completedSteps}/{totalSteps}
-              </p>
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div
-                  className="bg-green-500 h-2 rounded-full"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-              <p className="text-sm text-gray-400 mt-auto">Tap to view steps</p>
-            </Link>
-          );
-        })}
+        {/* Active Plants Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {activePlants.map((plant: any) => {
+            const steps = plant.steps || [];
+            const totalSteps = steps.length;
+            const completedSteps = steps.filter(
+              (s: any) => s.isCompleted
+            ).length;
+            const progressPercent = totalSteps
+              ? (completedSteps / totalSteps) * 100
+              : 0;
+
+            return (
+              <Link
+                key={plant._id}
+                href={`/plant-tracking/${plant._id}`}
+                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="p-6 flex flex-col justify-between h-full">
+                  {plant.imageUrl && (
+                    <img
+                      src={plant.imageUrl}
+                      alt={plant.plantName}
+                      className="w-full h-48 object-cover rounded-xl mb-4 shadow-md"
+                    />
+                  )}
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                    {plant.plantName}
+                  </h2>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Steps Completed: {completedSteps}/{totalSteps}
+                  </p>
+
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                    <div
+                      className="bg-green-500 h-2 rounded-full"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+
+                  <p className="text-sm text-gray-400 mt-auto">
+                    Tap to view steps
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
+
       <ChatToggle />
     </main>
   );

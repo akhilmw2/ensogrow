@@ -117,7 +117,7 @@ export const ChatBot = ({ onClose }: { onClose: () => void }) => {
       {/* Fixed Header */}
       <div className="bg-gradient-to-r from-[#a3b18a] to-[#588157] w-full text-white flex items-center rounded-t-2xl justify-between p-4 absolute top-0 z-10">
         <h2 className="text-lg font-semibold w-full text-center">
-          🌿 GrowMate Assistant
+          🌿 EnsoGrow Assistant
         </h2>
         <button
           onClick={onClose}
