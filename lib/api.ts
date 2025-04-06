@@ -1,27 +1,23 @@
 import axios from "axios";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
+
 const api = axios.create({
-    baseURL: 'http://localhost:3001',
-    // or wherever your Node backend is hosted
-    // Could be https://example.com
+    baseURL: API_BASE_URL,
 });
 
 
-// Example of a function calling your Crop Recommendation endpoint
-export const postCropRecommendation = async (data: {
+// POST /plants/recommendations
+export async function postCropRecommendation(formData: {
     location: string;
-    balconyDirection: string;
-    space: string;
     sunlightHours: number;
-}) => {
-    try {
-        const response = await api.post('/api/crop-recommendation', data);
-        return response.data;
-    } catch (error) {
-        console.error('Error posting crop recommendation', error);
-        throw error;
-    }
-};
+    availableSpace: string;
+  }) {
+    // This call will hit: baseURL + "/plants/recommendations"
+    const response = await api.post('/plants/recommendations', formData);
+    // Typically returns something like: { message: "Plants created successfully", data: [...] }
+    return response.data;
+}
 
 // Example of a function to authenticate a user (login)
 export const loginUser = async (credentials: {

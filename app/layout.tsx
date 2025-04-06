@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
+import { RecommendationsProvider } from "./context/RecommendationsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <RecommendationsProvider>
+          {children}
+        </RecommendationsProvider>
       </body>
     </html>
   );

@@ -1,17 +1,19 @@
 'use client';
-import { useState } from "react";
-import { postCropRecommendation } from "@/lib/api";
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useRecommendations } from '@/app/context/RecommendationsContext';
+import { postCropRecommendation } from '@/lib/api';
 
 export default function QuestionnairePage() {
     const [location, setLocation] = useState('');
-    const [balconyDirection, setBalconyDirection] = useState('');
     const [width, setWidth] = useState('');
     const [height, setHeight] = useState('');
     const [sunlightHours, setSunlightHours] = useState<number>(0);
-
-    const [recommendations, setRecommendations] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
+
+    const router = useRouter();
+    const { setRecommendations } = useRecommendations();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -19,16 +21,23 @@ export default function QuestionnairePage() {
 
         const formData = {
             location,
-            balconyDirection,
-            space: `${width}ft x ${height}ft`,
             sunlightHours,
+            availableSpace: `${width}x${height} ft`
         };
 
         try {
-            const data = await postCropRecommendation(formData);
-            // data should be something like { recommendations: [...] }
-            setRecommendations(data.recommendations || []);
-        } catch (err: any) {
+            // 1. Call your backend
+            const response = await postCropRecommendation(formData);
+            // Suppose we get { data: [ ... ] } from the server
+            if (response?.data) {
+                console.log(response.data)
+                // 2. Store the data in global context
+                setRecommendations(response.data);
+            }
+
+            // 3. Navigate to /recommendations
+            router.push('/recommendations');
+        } catch (err) {
             setError('Error fetching recommendations. Please try again.');
         }
     };
@@ -51,29 +60,6 @@ export default function QuestionnairePage() {
                         required
                     />
                 </div>
-
-                {/* <div>
-                    <label className="block mb-1 font-medium" htmlFor="balconyDirection">
-                        Balcony Direction
-                    </label>
-                    <select
-                        id="balconyDirection"
-                        className="w-full border border-gray-300 rounded px-3 py-2"
-                        value={balconyDirection}
-                        onChange={(e) => setBalconyDirection(e.target.value)}
-                        required
-                    >
-                        <option value="">Select direction</option>
-                        <option value="North">North</option>
-                        <option value="South">South</option>
-                        <option value="East">East</option>
-                        <option value="West">West</option>
-                        <option value="North-East">North-East</option>
-                        <option value="North-West">North-West</option>
-                        <option value="South-East">South-East</option>
-                        <option value="South-West">South-West</option>
-                    </select>
-                </div> */}
 
                 <div>
                     <label className="block mb-1 font-medium" htmlFor="space">
@@ -127,29 +113,12 @@ export default function QuestionnairePage() {
                 </button>
             </form>
 
+
+
             {error && (
                 <p className="mt-4 text-red-500">
                     {error}
                 </p>
-            )}
-
-            {recommendations.length > 0 && (
-                <div className="mt-6">
-                    <h2 className="text-xl font-semibold mb-2">Recommended Plants</h2>
-                    <ul className="space-y-2">
-                        {recommendations.map((rec, idx) => (
-                            <li
-                                key={idx}
-                                className="border border-gray-300 rounded p-4"
-                            >
-                                <p className="font-bold">{rec.plantName}</p>
-                                <p>Planting Season: {rec.plantingSeason}</p>
-                                <p>Yield Expectation: {rec.yieldExpectation}</p>
-                                <p>Notes: {rec.notes}</p>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
             )}
         </main>
     );
