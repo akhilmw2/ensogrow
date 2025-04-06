@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function PlantTrackingPage() {
   const params = useParams();
@@ -66,7 +67,7 @@ export default function PlantTrackingPage() {
         </div>
 
         {/* Step Checkboxes */}
-        <div className="text-left w-full">
+        <div className="text-left w-full mb-6">
           <h2 className="text-lg font-semibold mb-2">Follow these steps:</h2>
           <ul className="space-y-3">
             {mockPlantData.steps.map((step, idx) => (
@@ -88,6 +89,14 @@ export default function PlantTrackingPage() {
             ))}
           </ul>
         </div>
+
+        {/* Talk to Plant Doctor Button */}
+        <Link
+          href={`/plant-tracking/${plantId}/doctor`}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+          Talk to Plant Doctor
+        </Link>
       </div>
     </main>
   );
