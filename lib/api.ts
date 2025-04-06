@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getCookie } from "./utils";
+import { getCookie } from "./cookies";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
@@ -48,21 +48,19 @@ export async function getActivePlants() {
   return response.data; // e.g. { data: [...] }
 }
 
-
 // GET /plants/id
 export async function getPlanDetail(plantId: string) {
-    const response = await api.get(`/plants/${plantId}`);
-    return response.data; // e.g. { data: [...] }
+  const response = await api.get(`/plants/${plantId}`);
+  return response.data; // e.g. { data: [...] }
 }
-
 
 // PATCH /plants/:plantId/steps/:stepId/complete
 export async function completeStep(plantId: string, stepId: number) {
-    // Possibly your backend expects a payload or just a patch call
-    const response = await api.patch(`/plants/${plantId}/steps/${stepId}/complete`);
-    return response.data; // e.g. { message: 'Step updated', data: {...} }
-  }
-
-
+  // Possibly your backend expects a payload or just a patch call
+  const response = await api.patch(
+    `/plants/${plantId}/steps/${stepId}/complete`
+  );
+  return response.data; // e.g. { message: 'Step updated', data: {...} }
+}
 
 export default api;

@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useRecommendations } from '@/app/context/RecommendationsContext';
-import { activatePlant } from '@/lib/api';
+import React from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useRecommendations } from "@/app/context/RecommendationsContext";
+import { activatePlant } from "@/lib/api";
+import ChatToggle from "@/components/chatbot/ChatToggle";
 
 export default function PlantDetailsPage() {
   const params = useParams();
@@ -24,7 +25,7 @@ export default function PlantDetailsPage() {
         <p className="mb-4">No plant data found for ID: {id}.</p>
         <button
           className="bg-gray-200 px-4 py-2 rounded"
-          onClick={() => router.push('/recommendations')}
+          onClick={() => router.push("/recommendations")}
         >
           Go Back
         </button>
@@ -33,17 +34,10 @@ export default function PlantDetailsPage() {
   }
 
   // De-structure relevant fields from plant
-  const {
-    _id,
-    plantName,
-    name,
-    imageUrl,
-    successRate,
-    steps,
-  } = plant;
+  const { _id, plantName, name, imageUrl, successRate, steps } = plant;
 
   // Use whichever field for the name
-  const displayName = name || plantName || 'Unknown Plant';
+  const displayName = name || plantName || "Unknown Plant";
 
   // Handle "Proceed to Plant"
   async function handleProceedToPlant() {
@@ -51,10 +45,10 @@ export default function PlantDetailsPage() {
       // 1) Call API to activate this plant
       await activatePlant(_id);
       // 2) Redirect to the Dashboard
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
-      console.error('Error activating plant:', error);
-      alert('Failed to activate plant');
+      console.error("Error activating plant:", error);
+      alert("Failed to activate plant");
     }
   }
 
@@ -75,20 +69,20 @@ export default function PlantDetailsPage() {
 
         {/* Success Rate */}
         {successRate && (
-          <p className="text-gray-700 mb-4">
-            Success Rate: {successRate}
-          </p>
+          <p className="text-gray-700 mb-4">Success Rate: {successRate}</p>
         )}
 
         {/* Steps (if your data has an array of steps) */}
         {Array.isArray(steps) && steps.length > 0 && (
           <div className="text-left w-full">
-            <h2 className="text-lg font-semibold mb-2">Steps you'll need to follow:</h2>
+            <h2 className="text-lg font-semibold mb-2">
+              Steps you'll need to follow:
+            </h2>
             <ol className="list-decimal list-inside space-y-1">
               {steps.map((step, idx) => (
                 <li key={idx}>
                   {/* If step is an object with { title, description }, adapt accordingly */}
-                  {typeof step === 'string' ? step : step.title}
+                  {typeof step === "string" ? step : step.title}
                 </li>
               ))}
             </ol>
@@ -103,6 +97,7 @@ export default function PlantDetailsPage() {
           Proceed to Plant
         </button>
       </div>
+      <ChatToggle />
     </main>
   );
 }

@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { getActivePlants } from "@/lib/api"; // <-- the Axios-based function
-import { deleteCookie } from "@/lib/utils";
+import { deleteCookie } from "@/lib/cookies";
 import { redirect } from "next/navigation";
+import ChatToggle from "@/components/chatbot/ChatToggle";
 
 export default function DashboardPage() {
   const [activePlants, setActivePlants] = useState([]);
@@ -12,7 +13,7 @@ export default function DashboardPage() {
   useEffect(() => {
     async function fetchActive() {
       try {
-        const data = await getActivePlants();  // uses axios + token
+        const data = await getActivePlants(); // uses axios + token
         setActivePlants(data.data || []);
       } catch (err) {
         console.error("Failed to fetch active plants:", err);
@@ -50,7 +51,9 @@ export default function DashboardPage() {
           const steps = plant.steps || [];
           const totalSteps = steps.length;
           const completedSteps = steps.filter((s: any) => s.isCompleted).length;
-          const progressPercent = totalSteps ? (completedSteps / totalSteps) * 100 : 0;
+          const progressPercent = totalSteps
+            ? (completedSteps / totalSteps) * 100
+            : 0;
 
           return (
             <Link

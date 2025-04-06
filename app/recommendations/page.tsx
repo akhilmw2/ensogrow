@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useRecommendations } from "@/app/context/RecommendationsContext";
 import { postCustomPlants } from "@/lib/api";
+import ChatToggle from "@/components/chatbot/ChatToggle";
 
 export default function RecommendationsPage() {
   const router = useRouter();
@@ -68,6 +69,7 @@ export default function RecommendationsPage() {
             Fill Out Questionnaire
           </Link>
         </div>
+        <ChatToggle />
       </main>
     );
   }
@@ -135,6 +137,7 @@ export default function RecommendationsPage() {
           </button>
         </form>
       </div>
+      <ChatToggle />
     </main>
   );
 }

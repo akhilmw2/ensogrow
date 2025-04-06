@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRecommendations } from "@/app/context/RecommendationsContext";
 import { postCropRecommendation } from "@/lib/api";
+import ChatToggle from "@/components/chatbot/ChatToggle";
 
 export default function QuestionnairePage() {
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +47,6 @@ export default function QuestionnairePage() {
     <main className="bg-gradient-to-r from-green-50 via-green-100 to-green-200 min-h-screen py-10 px-6 flex items-center justify-center relative overflow-hidden">
       {/* Soft, transparent leaf elements */}
       <div className="absolute top-0 left-0 right-0 bottom-0 bg-[url('/leaf-pattern.png')] bg-cover bg-center opacity-15 z-0"></div>
-
       <div className="max-w-3xl w-full bg-white shadow-xl rounded-3xl p-8 z-10 relative">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 leading-tight">
           Balcony Garden Setup
@@ -145,6 +145,7 @@ export default function QuestionnairePage() {
           <p className="mt-6 text-center text-red-500 font-medium">{error}</p>
         )}
       </div>
+      <ChatToggle />
     </main>
   );
 }

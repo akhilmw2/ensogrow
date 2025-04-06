@@ -1,5 +1,6 @@
 "use client";
-import { cn, setCookie } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { setCookie } from "@/lib/cookies";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";

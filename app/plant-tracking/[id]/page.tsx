@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { getPlanDetail, completeStep } from '@/lib/api';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { getPlanDetail, completeStep } from "@/lib/api";
+import ChatToggle from "@/components/chatbot/ChatToggle";
 
 export default function PlantTrackingPage() {
-  const { id } = useParams();  // plantId
+  const { id } = useParams(); // plantId
   const [plant, setPlant] = useState<any>(null);
   const [completed, setCompleted] = useState<boolean[]>([]);
 
@@ -22,7 +23,7 @@ export default function PlantTrackingPage() {
         const checks = plantData.steps.map((step: any) => step.isCompleted);
         setCompleted(checks);
       } catch (err) {
-        console.error('Error fetching plant details:', err);
+        console.error("Error fetching plant details:", err);
       }
     }
     fetchPlant();
@@ -51,7 +52,7 @@ export default function PlantTrackingPage() {
         await completeStep(plant._id, stepId);
       }
     } catch (err) {
-      console.error('Error completing step:', err);
+      console.error("Error completing step:", err);
       // If it fails, you might revert the UI state or show an error
     }
   }
@@ -94,7 +95,9 @@ export default function PlantTrackingPage() {
                     className="h-4 w-4 accent-green-600"
                   />
                   <span
-                    className={completed[idx] ? 'line-through text-gray-500' : ''}
+                    className={
+                      completed[idx] ? "line-through text-gray-500" : ""
+                    }
                   >
                     {step.title}
                   </span>
@@ -112,6 +115,7 @@ export default function PlantTrackingPage() {
           Talk to Plant Doctor
         </Link>
       </div>
+      <ChatToggle />
     </main>
   );
 }

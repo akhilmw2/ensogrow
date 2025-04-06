@@ -1,6 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useMemo, useState } from "react";
+import { getCookie } from "@/lib/cookies";
+import { useRouter } from "next/navigation";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 // 1. Define the shape of your data
 interface Step {
@@ -60,6 +68,14 @@ export function RecommendationsProvider({
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
   const [sunlightHours, setSunlightHours] = useState<number>(0);
+  const { replace } = useRouter();
+
+  useEffect(() => {
+    const token = getCookie("accessToken");
+    if (!token) {
+      replace("/login");
+    }
+  }, []);
 
   const recommendationContext = useMemo(
     () => ({
